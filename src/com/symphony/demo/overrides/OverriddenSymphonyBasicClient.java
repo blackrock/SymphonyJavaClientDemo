@@ -1,6 +1,5 @@
 package com.symphony.demo.overrides;
 
-import org.apache.log4j.Logger;
 import org.symphonyoss.client.impl.SymphonyBasicClient;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.clients.UsersClient;
@@ -11,9 +10,7 @@ import org.symphonyoss.symphony.clients.UsersFactory;
  *
  */
 public class OverriddenSymphonyBasicClient extends SymphonyBasicClient {
-
     private UsersClient usersClient;
-    private static final Logger LOG = Logger.getLogger(OverriddenSymphonyBasicClient.class);
 
     @Override
     public boolean init(SymAuth symAuth, String email, String agentUrl, String serviceUrl) throws Exception {
@@ -32,14 +29,7 @@ public class OverriddenSymphonyBasicClient extends SymphonyBasicClient {
         super.setAgentUrl(agentUrl);
         super.setServiceUrl(serviceUrl);
 
-        try {
-
-            usersClient = UsersFactory.getClient(this, UsersFactory.TYPE.DEFAULT);
-        } catch (Exception e) {
-            LOG.error("Could not initialize one of the Symphony API services." + " This is most likely due to not having the right agent or pod URLs."
-                    + " This can also be an issue with the client certificate or server.trustore." + " Here is what you have configured: {}");
-
-        }
+        usersClient = UsersFactory.getClient(this, UsersFactory.TYPE.DEFAULT);
         return true;
     }
 

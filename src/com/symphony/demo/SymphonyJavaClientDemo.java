@@ -16,25 +16,21 @@ import com.symphony.demo.overrides.OverridenHttpClient;
 
 @Component
 public class SymphonyJavaClientDemo {
-
     private static final Logger LOG = Logger.getLogger(SymphonyJavaClientDemo.class);
 
-    private final String sessionAuthUrl;
-    private final String keyAuthUrl;
-    private final String symphonyAgentUrl;
-    private final String symphonyPodUrl;
     private final OverridenHttpClient overridenHttpClient;
 
     @Autowired
-    public SymphonyJavaClientDemo(OverridenHttpClient overridenHttpClient, String sessionAuthUrl, String keyAuthUrl, String symphonyAgentUrl, String symphonyPodUrl) {
-        this.sessionAuthUrl = sessionAuthUrl;
-        this.keyAuthUrl = keyAuthUrl;
-        this.symphonyAgentUrl = symphonyAgentUrl;
-        this.symphonyPodUrl = symphonyPodUrl;
+    public SymphonyJavaClientDemo(OverridenHttpClient overridenHttpClient) {
         this.overridenHttpClient = overridenHttpClient;
     }
 
     private void start() throws Exception {
+        String sessionAuthUrl = System.getProperty("SESSION_AUTH_URL");
+        String keyAuthUrl = System.getProperty("KEY_AUTH_URL");
+        String symphonyAgentUrl = System.getProperty("SYMPHONY_AGENT_URL");
+        String symphonyPodUrl = System.getProperty("SYMPHONY_POD_URL");
+        
         overrideDefaultClients();
         
         SymphonyClient symphonyClient = new OverriddenSymphonyBasicClient();
@@ -61,17 +57,20 @@ public class SymphonyJavaClientDemo {
             e.printStackTrace();
         }
     }
-
+    
     private void overrideDefaultClients() throws Exception {
-        Client client = overridenHttpClient.getClient();
+        Client client = overridenHttpClient.getHttpClient();
+
         org.symphonyoss.symphony.authenticator.invoker.ApiClient defaultAuthClient = new org.symphonyoss.symphony.authenticator.invoker.ApiClient();
-        org.symphonyoss.symphony.pod.invoker.ApiClient defaultPodClient = new org.symphonyoss.symphony.pod.invoker.ApiClient();
-        org.symphonyoss.symphony.agent.invoker.ApiClient defaultAgentClient = new org.symphonyoss.symphony.agent.invoker.ApiClient();
         defaultAuthClient.setHttpClient(client);
-        defaultPodClient.setHttpClient(client);
-        defaultAgentClient.setHttpClient(client);
         org.symphonyoss.symphony.authenticator.invoker.Configuration.setDefaultApiClient(defaultAuthClient);
+        
+        org.symphonyoss.symphony.pod.invoker.ApiClient defaultPodClient = new org.symphonyoss.symphony.pod.invoker.ApiClient();
+        defaultPodClient.setHttpClient(client);
         org.symphonyoss.symphony.pod.invoker.Configuration.setDefaultApiClient(defaultPodClient);
+
+        org.symphonyoss.symphony.agent.invoker.ApiClient defaultAgentClient = new org.symphonyoss.symphony.agent.invoker.ApiClient();
+        defaultAgentClient.setHttpClient(client);
         org.symphonyoss.symphony.agent.invoker.Configuration.setDefaultApiClient(defaultAgentClient);
     }
 }

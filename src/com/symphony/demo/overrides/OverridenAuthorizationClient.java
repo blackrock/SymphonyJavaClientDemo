@@ -12,10 +12,11 @@ import org.symphonyoss.symphony.clients.AuthorizationClient;
  *
  */
 public class OverridenAuthorizationClient extends AuthorizationClient {
-    private SymAuth symAuth;
-    private final String authUrl;
-    private boolean LOGIN_STATUS = false;
     private final Logger LOG = Logger.getLogger(AuthorizationClient.class);
+
+    private SymAuth symphonyAuthentication;
+    private final String authUrl;
+    private boolean loginStatus = false;
 
     public OverridenAuthorizationClient(String authUrl, String keyUrl) {
         super(authUrl, keyUrl);
@@ -24,31 +25,25 @@ public class OverridenAuthorizationClient extends AuthorizationClient {
 
     @Override
     public SymAuth authenticate() throws Exception {
-        try {
-            symAuth = new SymAuth();
-            org.symphonyoss.symphony.authenticator.invoker.ApiClient authenticatorClient = Configuration.getDefaultApiClient();
+        symphonyAuthentication = new SymAuth();
+        org.symphonyoss.symphony.authenticator.invoker.ApiClient authenticatorClient = Configuration.getDefaultApiClient();
 
-            LOG.info("Authenticator client proxy: " + authenticatorClient.getHttpClient().getConfiguration().getProperty(ClientProperties.PROXY_URI));
-            authenticatorClient.setBasePath(authUrl);
+        LOG.info("Authenticator client proxy: " + authenticatorClient.getHttpClient().getConfiguration().getProperty(ClientProperties.PROXY_URI));
+        authenticatorClient.setBasePath(authUrl);
 
-            // Get the authentication API
-            AuthenticationApi authenticationApi = new AuthenticationApi(authenticatorClient);
+        // Get the authentication API
+        AuthenticationApi authenticationApi = new AuthenticationApi(authenticatorClient);
 
-            symAuth.setSessionToken(authenticationApi.v1AuthenticatePost());
-            LOG.info("SessionToken: {} : {}" + symAuth.getSessionToken().getName() + symAuth.getSessionToken().getToken());
+        symphonyAuthentication.setSessionToken(authenticationApi.v1AuthenticatePost());
+        LOG.info("SessionToken: {} : {}" + symphonyAuthentication.getSessionToken().getName() + symphonyAuthentication.getSessionToken().getToken());
 
-        } catch (Exception e) {
-            LOG.error("Login failure: {}" + e.getMessage());
-            throw new Exception("Please check certificates, tokens and paths..");
-        }
-
-        LOGIN_STATUS = true;
-        return symAuth;
+        loginStatus = true;
+        return symphonyAuthentication;
     }
 
     @Override
     public boolean isLoggedIn() {
-        return LOGIN_STATUS;
+        return loginStatus;
     }
 }
 

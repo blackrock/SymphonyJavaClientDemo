@@ -38,7 +38,7 @@ public class OverridenHttpClient {
         }
     }
 
-    public Client getClient() throws Exception {
+    public Client getHttpClient() throws Exception {
         HttpUrlConnectorProvider connectorProvider = new HttpUrlConnectorProvider();
 
         HttpUrlConnectorProvider.ConnectionFactory connectionFactory = new HttpUrlConnectorProvider.ConnectionFactory() {

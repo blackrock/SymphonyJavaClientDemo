@@ -13,61 +13,36 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class ApplicationConfiguration {
-
     /**
      * Create a KeyManagerFactory for use with SSL, initialized with a certificate
      *
      * @return KeyManagerFactory to be used to authenticate with Symphony
-     * @throws Exception
-     *             Problems with the certificate, for example the wrong type or password, will throw a range of
-     *             exceptions
+     * @throws Exception Problems with the certificate, for example the wrong type or password, will throw a range of exceptions
      */
     @Bean
     public KeyManagerFactory keyManagerFactory() throws Exception {
         ClassLoader classLoader = getClass().getClassLoader();
         KeyStore keyStore = KeyStore.getInstance(System.getProperty("SYMPHONY_GATEWAY_CERTIFICATE_TYPE"));
         keyStore.load(classLoader.getResourceAsStream(System.getProperty("SYMPHONY_GATEWAY_CERTIFICATE")), certificatePassword());
-        KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-        kmf.init(keyStore, certificatePassword());
-        return kmf;
+        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        keyManagerFactory.init(keyStore, certificatePassword());
+        return keyManagerFactory;
     }
 
     /**
      * Create a TrustManagerFactory for use with SSL, initialized with a trust store
      *
      * @return TrustManagerFactory to verify the certificate from Symphony
-     * @throws Exception
-     *             Problems with the trust store, for example the wrong type or file path, will throw a range of
-     *             exceptions
+     * @throws Exception Problems with the trust store, for example the wrong type or file path, will throw a range of exceptions
      */
     @Bean
     public TrustManagerFactory trustManagerFactory() throws Exception {
         ClassLoader classLoader = getClass().getClassLoader();
         KeyStore trustStore = KeyStore.getInstance(System.getProperty("SYMPHONY_GATEWAY_TRUST_STORE_TYPE"));
         trustStore.load(classLoader.getResourceAsStream(System.getProperty("SYMPHONY_GATEWAY_TRUST_STORE")), null);
-        TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-        tmf.init(trustStore);
-        return tmf;
-    }
-
-    @Bean
-    public String symphonyPodUrl() {
-        return System.getProperty("SYMPHONY_POD");
-    }
-
-    @Bean
-    public String symphonyAgentUrl() {
-        return System.getProperty("SYMPHONY_AGENT");
-    }
-
-    @Bean
-    public String sessionAuthUrl() {
-        return System.getProperty("SESSION_AUTH_URL");
-    }
-
-    @Bean
-    public String keyAuthUrl() {
-        return System.getProperty("KEY_AUTH_URL");
+        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        trustManagerFactory.init(trustStore);
+        return trustManagerFactory;
     }
 
     /**
