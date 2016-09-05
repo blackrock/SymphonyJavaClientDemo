@@ -1,0 +1,54 @@
+package com.symphony.demo.overrides;
+
+import org.apache.log4j.Logger;
+import org.glassfish.jersey.client.ClientProperties;
+import org.symphonyoss.client.model.SymAuth;
+import org.symphonyoss.symphony.authenticator.api.AuthenticationApi;
+import org.symphonyoss.symphony.authenticator.invoker.Configuration;
+import org.symphonyoss.symphony.clients.AuthorizationClient;
+
+/**
+ * AuthorizationClient which retrieves only session token, not key manager token
+ *
+ */
+public class OverridenAuthorizationClient extends AuthorizationClient {
+    private SymAuth symAuth;
+    private final String authUrl;
+    private boolean LOGIN_STATUS = false;
+    private final Logger LOG = Logger.getLogger(AuthorizationClient.class);
+
+    public OverridenAuthorizationClient(String authUrl, String keyUrl) {
+        super(authUrl, keyUrl);
+        this.authUrl = authUrl;
+    }
+
+    @Override
+    public SymAuth authenticate() throws Exception {
+        try {
+            symAuth = new SymAuth();
+            org.symphonyoss.symphony.authenticator.invoker.ApiClient authenticatorClient = Configuration.getDefaultApiClient();
+
+            LOG.info("Authenticator client proxy: " + authenticatorClient.getHttpClient().getConfiguration().getProperty(ClientProperties.PROXY_URI));
+            authenticatorClient.setBasePath(authUrl);
+
+            // Get the authentication API
+            AuthenticationApi authenticationApi = new AuthenticationApi(authenticatorClient);
+
+            symAuth.setSessionToken(authenticationApi.v1AuthenticatePost());
+            LOG.info("SessionToken: {} : {}" + symAuth.getSessionToken().getName() + symAuth.getSessionToken().getToken());
+
+        } catch (Exception e) {
+            LOG.error("Login failure: {}" + e.getMessage());
+            throw new Exception("Please check certificates, tokens and paths..");
+        }
+
+        LOGIN_STATUS = true;
+        return symAuth;
+    }
+
+    @Override
+    public boolean isLoggedIn() {
+        return LOGIN_STATUS;
+    }
+}
+
