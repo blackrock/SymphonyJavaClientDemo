@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration>
+
+    <appender name="default" class="org.apache.log4j.AsyncAppender">
+    <!-- this parameter need to be set to false to avoid application from hanging. -->
+        <param name="Blocking" value="false" />
+        <appender-ref ref="consoleAppender" />
+    </appender>
+
+    <appender name="consoleAppender" class="org.apache.log4j.ConsoleAppender">
+        <param name="Threshold" value="INFO" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%-5p %d{ISO8601} [%t] %c %x - %m%n" />
+        </layout>
+    </appender>
+    
+    <logger name="org.symphonyoss.symphony">
+        <level value="WARN" />
+    </logger>
+    
+        <logger name="org.springframework">
+        <level value="WARN" />
+    </logger>
+
+    <root>
+        <priority value="INFO" />
+        <appender-ref ref="default" />
+    </root>
+
+</log4j:configuration>
