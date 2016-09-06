@@ -40,7 +40,7 @@ public class SymphonyJavaClientDemo {
         AuthorizationClient authClient = new OverridenAuthorizationClient(sessionAuthUrl, keyAuthUrl);
         LOG.info("Clients created successfully");
         
-        // STEP 2: Authenticate the client and get Session Token
+        // STEP 2: Authenticate the client and get session-token
         SymAuth symphonyAuthentictor = authClient.authenticate();
         LOG.info("Clients authenticated successfully");
         LOG.info("Session Token: " + symphonyAuthentictor.getSessionToken().getToken() );
