@@ -17,6 +17,13 @@ import com.symphony.demo.overrides.OverridenHttpClient;
 @Component
 public class SymphonyJavaClientDemo {
     private static final Logger LOG = Logger.getLogger(SymphonyJavaClientDemo.class);
+    
+    // Get specific information from System properties 
+    String sessionAuthUrl = System.getProperty("SESSION_AUTH_URL");
+    String keyAuthUrl = System.getProperty("KEY_AUTH_URL");
+    String symphonyAgentUrl = System.getProperty("SYMPHONY_AGENT_URL");
+    String symphonyPodUrl = System.getProperty("SYMPHONY_POD_URL");
+    String userEmail = System.getProperty("USER_EMAIL");
 
     private final OverridenHttpClient overridenHttpClient;
 
@@ -26,24 +33,24 @@ public class SymphonyJavaClientDemo {
     }
 
     private void start() throws Exception {
-        String sessionAuthUrl = System.getProperty("SESSION_AUTH_URL");
-        String keyAuthUrl = System.getProperty("KEY_AUTH_URL");
-        String symphonyAgentUrl = System.getProperty("SYMPHONY_AGENT_URL");
-        String symphonyPodUrl = System.getProperty("SYMPHONY_POD_URL");
+        enableProxies();
         
-        overrideDefaultClients();
-        
+        // STEP 1: Create clients
         SymphonyClient symphonyClient = new OverriddenSymphonyBasicClient();
         AuthorizationClient authClient = new OverridenAuthorizationClient(sessionAuthUrl, keyAuthUrl);
-        LOG.info("Clients initiated successfully");
+        LOG.info("Clients created successfully");
         
-        SymAuth symAuth = authClient.authenticate();
+        // STEP 2: Authenticate the client and get Session Token
+        SymAuth symphonyAuthentictor = authClient.authenticate();
         LOG.info("Clients authenticated successfully");
-        LOG.info("Session Token: " + symAuth.getSessionToken().getToken() );
+        LOG.info("Session Token: " + symphonyAuthentictor.getSessionToken().getToken() );
        
-        symAuth.setKeyToken(new Token());  // Add dummy key token
-        String userEmail = System.getProperty("USER_EMAIL");
-        symphonyClient.init(symAuth, userEmail, symphonyAgentUrl, symphonyPodUrl);
+        // STEP 3: Initialise the client
+        symphonyAuthentictor.setKeyToken(new Token());  // Add dummy key token
+        symphonyClient.init(symphonyAuthentictor, userEmail, symphonyAgentUrl, symphonyPodUrl);
+        LOG.info("Clients initialised successfully");
+
+        // STEP 4: Get user-id from user-email
         LOG.info("Retrieving user-id for: " + userEmail);
         Long userId = symphonyClient.getUsersClient().getUserFromEmail(userEmail).getId();
         LOG.info("User Id for " + userEmail + " is " + userId);
@@ -58,7 +65,7 @@ public class SymphonyJavaClientDemo {
         }
     }
     
-    private void overrideDefaultClients() throws Exception {
+    private void enableProxies() throws Exception {
         Client client = overridenHttpClient.getHttpClient();
 
         org.symphonyoss.symphony.authenticator.invoker.ApiClient defaultAuthClient = new org.symphonyoss.symphony.authenticator.invoker.ApiClient();
