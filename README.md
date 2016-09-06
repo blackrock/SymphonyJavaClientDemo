@@ -1,5 +1,11 @@
 # Symphony Java Client Demo
 
+The objective of this repository to have a simple demo to connect Symphony (https://symphony.com/) using their REST APIs (https://developers.symphony.com/). 
+
+## Pre-requisite for this is as follows:
+1. A Symphony POD to connect to
+2. Certificates & Trust Store to connect to this Symphony POD
+
 ## Known Tokens
 * SYMPHONY_GATEWAY_CERTIFICATE - path to the keystore containing certificate
 * SYMPHONY_GATEWAY_PASSWORD - path to the file containing encrypted password for the keystore
