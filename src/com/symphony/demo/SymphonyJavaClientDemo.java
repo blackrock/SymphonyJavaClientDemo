@@ -33,8 +33,6 @@ public class SymphonyJavaClientDemo {
     }
 
     private void start() throws Exception {
-        enableProxies();
-        
         // STEP 1: Create clients
         SymphonyClient symphonyClient = new OverriddenSymphonyBasicClient();
         AuthorizationClient authClient = new OverridenAuthorizationClient(sessionAuthUrl, keyAuthUrl);
@@ -52,7 +50,7 @@ public class SymphonyJavaClientDemo {
 
         // STEP 4: Get user-id from user-email
         LOG.info("Retrieving user-id for: " + userEmail);
-        Long userId = symphonyClient.getUsersClient().getUserFromEmail(userEmail).getId();
+        Long userId = null; //TODO: Implement this
         LOG.info("User Id for " + userEmail + " is " + userId);
     }
 
