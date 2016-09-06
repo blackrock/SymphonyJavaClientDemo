@@ -15,19 +15,21 @@ public class OverriddenSymphonyBasicClient extends SymphonyBasicClient {
     @Override
     public boolean init(SymAuth symAuth, String email, String agentUrl, String serviceUrl) throws Exception {
 
-        String NOT_LOGGED_IN_MESSAGE = "Currently not logged into Agent, please check certificates and tokens.";
-        if (symAuth == null || symAuth.getSessionToken() == null || symAuth.getKeyToken() == null)
-            throw new Exception("Symphony Authorization is not valid", new Throwable(NOT_LOGGED_IN_MESSAGE));
+        if (symAuth == null || symAuth.getSessionToken() == null || symAuth.getKeyToken() == null) {
+            throw new Exception("Symphony Authorization is not valid");
+        }
 
-        if (agentUrl == null)
-            throw new Exception("Failed to provide agent URL", new Throwable("Failed to provide agent URL"));
+        if (agentUrl == null) {
+            throw new Exception("Failed to provide agent URL");
+        }
 
-        if (serviceUrl == null)
-            throw new Exception("Failed to provide service URL", new Throwable("Failed to provide service URL"));
+        if (serviceUrl == null) {
+            throw new Exception("Failed to provide service URL");
+        }
 
-        super.setSymAuth(symAuth);
-        super.setAgentUrl(agentUrl);
-        super.setServiceUrl(serviceUrl);
+        setSymAuth(symAuth);
+        setAgentUrl(agentUrl);
+        setServiceUrl(serviceUrl);
 
         usersClient = UsersFactory.getClient(this, UsersFactory.TYPE.DEFAULT);
         return true;
@@ -35,6 +37,6 @@ public class OverriddenSymphonyBasicClient extends SymphonyBasicClient {
 
     @Override
     public UsersClient getUsersClient() {
-        return this.usersClient;
+        return usersClient;
     }
 }

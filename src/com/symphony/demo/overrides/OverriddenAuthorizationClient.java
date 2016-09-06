@@ -11,14 +11,14 @@ import org.symphonyoss.symphony.clients.AuthorizationClient;
  * AuthorizationClient which retrieves only session token, not key manager token
  *
  */
-public class OverridenAuthorizationClient extends AuthorizationClient {
+public class OverriddenAuthorizationClient extends AuthorizationClient {
     private final Logger LOG = Logger.getLogger(AuthorizationClient.class);
 
     private SymAuth symphonyAuthentication;
     private final String authUrl;
     private boolean loginStatus = false;
 
-    public OverridenAuthorizationClient(String authUrl, String keyUrl) {
+    public OverriddenAuthorizationClient(String authUrl, String keyUrl) {
         super(authUrl, keyUrl);
         this.authUrl = authUrl;
     }

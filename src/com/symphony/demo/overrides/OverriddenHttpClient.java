@@ -20,14 +20,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OverridenHttpClient {
+public class OverriddenHttpClient {
 
     private final KeyManagerFactory keyManagerFactory;
     private final TrustManagerFactory trustManagerFactory;
-    private Proxy proxy;
+    private final Proxy proxy;
 
     @Autowired
-    public OverridenHttpClient(KeyManagerFactory keyManagerFactory, TrustManagerFactory trustManagerFactory, URL webProxyUrl) {
+    public OverriddenHttpClient(KeyManagerFactory keyManagerFactory, TrustManagerFactory trustManagerFactory, URL webProxyUrl) {
         this.keyManagerFactory = keyManagerFactory;
         this.trustManagerFactory = trustManagerFactory;
 
@@ -52,8 +52,8 @@ public class OverridenHttpClient {
                     throw new RuntimeException("Can't open connection to " + url, e);
                 }
             }
-
         };
+        
         SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
         sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), new SecureRandom());
         connectorProvider.connectionFactory(connectionFactory);
